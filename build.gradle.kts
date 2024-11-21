@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.10"
     kotlin("plugin.serialization") version "1.9.10"
+    id("maven-publish")
 }
 
 group = "com.skunkworks"
@@ -31,4 +32,25 @@ tasks.test {
 
 kotlin {
     jvmToolchain(17)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("gpr") {
+            from(components["java"])
+            groupId = "com.skunkworks.magic"
+            artifactId = "magic-admin-kotlin"
+            version = "1.0.0"
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Executioner1939/magic-admin-kotlin")
+            credentials {
+                username = System.getenv("ACTOR")
+                password = System.getenv("TOKEN")
+            }
+        }
+    }
 }

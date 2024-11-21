@@ -1,5 +1,5 @@
 
-name: Build and Upload Kotlin Library
+name: Build and Upload Library
 
 on:
   push:
@@ -44,9 +44,8 @@ jobs:
       - name: Build the library
         run: ./gradlew build
 
-      # Upload build artifact
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: kotlin-library
-          path: build/libs/
+      - name: Publish to GitHub Packages
+        run: ./gradlew publish
+        env:
+          ACTOR: ${{ secrets.ACTOR }}
+          TOKEN: ${{ secrets.TOKEN }}
