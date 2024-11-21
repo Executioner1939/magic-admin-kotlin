@@ -16,6 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Set execute permission for Gradlew
+      - name: Make Gradlew executable
+        run: chmod +x ./gradlew
+
       # Set up JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v3
