@@ -38,7 +38,7 @@ publishing {
     publications {
         create<MavenPublication>("gpr") {
             from(components["java"])
-            groupId = "com.skunkworks.magic"
+            groupId = "com.skunkworks"
             artifactId = "magic-admin-kotlin"
             version = "1.0.1"
         }

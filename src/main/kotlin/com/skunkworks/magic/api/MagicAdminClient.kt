@@ -13,6 +13,9 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
@@ -28,6 +31,7 @@ class MagicAdminClient(
     baseUrl: String = "https://api.magic.link",
     httpClient: HttpClient? = null
 ) : AutoCloseable {
+
     companion object {
         const val API_SECRET_HEADER = "X-Magic-Secret-Key"
     }
@@ -53,18 +57,19 @@ class MagicAdminClient(
 
     private val endpoints = MagicAdminEndpointsImpl(client)
 
-    private val magicClientId: String
+    // Lazy initialization of magicClientId
+    private var magicClientId: String? = null
 
-    init {
-        // Fetch the client ID when creating the instance
-        magicClientId = runBlocking {
-            fetchClientInfo().clientId ?: throw IllegalStateException("Client ID is missing in the response")
+    // Fetch client ID only if it's not cached
+    private suspend fun getMagicClientId(): String {
+        return magicClientId ?: fetchClientInfo().getOrThrow().clientId.also {
+            magicClientId = it
         }
     }
 
-    private suspend fun fetchClientInfo(): ClientInfo {
-        return endpoints.getClientInfo().data
-            ?: throw IllegalStateException("Failed to fetch client info from Magic API")
+    private suspend fun fetchClientInfo(): Result<ClientInfo> = runCatching {
+        val response = endpoints.getClientInfo()
+        response.data ?: MagicAdminException.fromApiResponse(response)
     }
 
     suspend fun getUserMetadataByToken(
@@ -72,7 +77,7 @@ class MagicAdminClient(
         walletType: WalletType = WalletType.NONE
     ): Result<UserInfo> = runCatching {
         val token = Token.decode(didToken)
-        token.validate(magicClientId)
+        token.validate(getMagicClientId())
         getUserMetadataByIssuer(token.issuer, walletType).getOrThrow()
     }
 
@@ -84,7 +89,6 @@ class MagicAdminClient(
             issuer,
             walletType.takeUnless { it == WalletType.NONE }?.toString()
         )
-
         response.data ?: MagicAdminException.fromApiResponse(response)
     }
 
@@ -97,7 +101,7 @@ class MagicAdminClient(
 
     suspend fun logoutByToken(didToken: String): Result<Unit> = runCatching {
         val token = Token.decode(didToken)
-        token.validate(magicClientId)
+        token.validate(getMagicClientId())
         logoutByIssuer(token.issuer).getOrThrow()
     }
 

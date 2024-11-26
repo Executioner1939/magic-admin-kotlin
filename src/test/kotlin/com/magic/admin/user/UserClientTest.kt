@@ -73,7 +73,6 @@ class UserClientTest {
 
     private fun createTestClient(secret: String = testSecret): MagicAdminClient {
         val mockEngine = MockEngine { request ->
-            // Log request details for debugging
             println("URL: ${request.url}")
             println("Headers: ${request.headers.entries()}")
 
@@ -93,8 +92,24 @@ class UserClientTest {
                 )
             }
 
-            // If auth passes, handle the endpoints
+            // Handle `/v1/admin/client/get` endpoint
             when (request.url.encodedPath) {
+                "/v1/admin/client/get" -> {
+                    respond(
+                        content = Json.encodeToString(
+                            buildJsonObject {
+                                put("status", "ok")
+                                put("data", buildJsonObject {
+                                    put("client_id", testClientId) // Add this field
+                                    put("app_scope", "some-scope") // Add this field
+                                })
+                            }
+                        ),
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json")
+                    )
+                }
+
                 "/v1/admin/auth/user/get" -> {
                     respond(
                         content = Json.encodeToString(
@@ -124,8 +139,7 @@ class UserClientTest {
 
         return MagicAdminClient(
             secretKey = secret,
-            magicClientId = testClientId,
-            baseUrl = "",
+            baseUrl = "http://localhost",
             httpClient = createMockHttpClient(mockEngine, secret)
         )
     }
@@ -150,7 +164,6 @@ class UserClientTest {
 
         return MagicAdminClient(
             secretKey = testSecret,
-            magicClientId = testClientId,
             baseUrl = "",
             httpClient = createMockHttpClient(mockEngine, testSecret)
         )
