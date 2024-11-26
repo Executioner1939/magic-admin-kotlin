@@ -3,10 +3,8 @@ package com.skunkworks.magic.token
 import com.skunkworks.magic.errors.DIDTokenError
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.web3j.crypto.Hash
 import org.web3j.crypto.Keys
 import org.web3j.crypto.Sign
-import org.web3j.protocol.core.Ethereum
 import org.web3j.utils.Numeric
 import java.nio.charset.StandardCharsets
 import java.security.SignatureException
@@ -14,6 +12,14 @@ import java.time.Instant
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
+/**
+ * The `Token` class represents a token containing a proof and associated claims.
+ * It provides functionalities to decode, validate, and extract specific information
+ * like the public address from the token.
+ *
+ * @property proof The proof component of the token.
+ * @property claim The `Claim` associated with the token.
+ */
 class Token(
     val proof: String,
     val claim: Claim
@@ -23,6 +29,18 @@ class Token(
     companion object {
         private const val NBF_GRACE_PERIOD = 300
 
+        /**
+         * Decodes a provided base64-encoded token string and parses it into a `Token` object.
+         *
+         * This method first decodes the token from base64 format, and then parses it into
+         * two parts. The first part represents the proof, and the second part is the claim in JSON format.
+         * If any decoding or parsing errors occur, appropriate `DIDTokenError` exceptions are thrown.
+         *
+         * @param token The base64-encoded token string to be decoded.
+         * @return A `Token` object containing the decoded proof and claim.
+         * @throws DIDTokenError.Base64DecodingError If the base64-decoding process fails.
+         * @throws DIDTokenError.InvalidTokenFormat If the token format is invalid or cannot be parsed correctly.
+         */
         @OptIn(ExperimentalEncodingApi::class)
         fun decode(token: String): Token {
             val decoded = try {
@@ -65,12 +83,17 @@ class Token(
     }
 
     /**
-     * Validates a client's token by performing various checks such as expiry, validity, audience match,
-     * and signature verification. This method throws appropriate errors if any validation step fails.
+     * Validates the DID token against the provided client ID.
      *
-     * @param clientId The unique identifier of the client for whom the token is being validated.
+     * This method checks the token's expiration time, not-before time, audience, and signature.
+     * If any of these validations fail, appropriate exceptions are thrown.
+     *
+     * @param clientId The ID of the client for which the token should be valid.
      * @throws DIDTokenError.TokenExpired if the token has expired.
-     * @throws DID*/
+     * @throws DIDTokenError.TokenNotYetValid if the token is not yet valid.
+     * @throws DIDTokenError.AudienceMismatch if the audience of the token does not match the provided client ID.
+     * @throws DIDTokenError.SignatureMismatch if the token's signature is invalid.
+     */
     fun validate(clientId: String) {
         val now = Instant.now().epochSecond
 

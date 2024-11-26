@@ -37,7 +37,7 @@ publishing {
             from(components["java"])
             groupId = "com.skunkworks"
             artifactId = "magic-admin-kotlin"
-            version = "1.0.3"
+            version = "1.0.4"
         }
     }
     repositories {

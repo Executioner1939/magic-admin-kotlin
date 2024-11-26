@@ -1,16 +1,15 @@
 package com.skunkworks.magic.errors
 
 import com.skunkworks.magic.model.ApiResponse
-import io.ktor.client.plugins.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * A sealed class representing various exceptions that can occur in the Magic Admin environment.
+ * Represents various exceptions that can occur in the MagicAdmin context.
  *
- * This class is designed to handle different types of errors that might be encountered
- * when interacting with Magic Admin APIs, providing appropriate status codes and messages
- * for each error type. It extends the [Exception] class.
+ * This sealed class extends the `Exception` class to provide customized error handling
+ * for specific scenarios such as rate limiting, bad requests, unauthorized access,
+ * forbidden actions, and general API errors.
  */
 @Serializable
 sealed class MagicAdminException : Exception() {
@@ -53,16 +52,18 @@ sealed class MagicAdminException : Exception() {
     ) : MagicAdminException()
 
     companion object {
-        fun from(response: ClientRequestException): MagicAdminException {
-            return when (response.response.status.value) {
-                429 -> RateLimitExceeded(response.message)
-                400 -> BadRequest(response.message)
-                401 -> Unauthorized(response.message)
-                403 -> Forbidden(response.message)
-                else -> ApiError(response.message, response.response.status.value)
-            }
-        }
 
+        /**
+         * Handles an API response and throws an appropriate exception based on the error code.
+         *
+         * @param response The `ApiResponse` object containing the status, error code, and message from the API.
+         * @return This function does not return anything as it always throws an exception.
+         * @throws Unauthorized If the error code is "err_code_unauthorized".
+         * @throws BadRequest If the error code is "err_code_bad_request".
+         * @throws Forbidden If the error code is "err_code_forbidden".
+         * @throws RateLimitExceeded If the error code is "err_code_rate_limited".
+         * @throws ApiError If the error code does not match any of the predefined error codes or if the API response is invalid.
+         */
         fun fromApiResponse(response: ApiResponse<*>): Nothing {
             if (response.status == "fail") {
                 val error = when (response.errorCode) {

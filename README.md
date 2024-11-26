@@ -38,7 +38,7 @@ dependencies {
 ```
 
 # Quick Start
-Before you start, you will need an API secret key and a Magic Client ID. You can get these from the Magic Dashboard. Once you have them, you can instantiate a MagicAdminClient object.
+Before you start, you will need an API secret key. You can get this from the Magic Dashboard. Once you have it, you can instantiate a MagicAdminClient object.
 
 Retrieve User Info by DID Token
 Sample code to retrieve user info by a DID Token:
@@ -49,8 +49,7 @@ import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
     val magicClient = MagicAdminClient(
-        secretKey = "<YOUR_API_SECRET_KEY>",
-        magicClientId = "<YOUR_MAGIC_CLIENT_ID>"
+        secretKey = "<YOUR_API_SECRET_KEY>"
     )
 
     val userInfoResult = magicClient.getUserMetadataByToken("<DID_TOKEN>")
@@ -59,6 +58,7 @@ fun main() = runBlocking {
     }.onFailure { error ->
         println("Error: ${error.message}")
     }
+}
 }
 ```
 
@@ -70,11 +70,10 @@ import com.skunkworks.magic.token.Token
 
 fun main() {
     val didToken = "<DID_TOKEN>"
-    val clientId = "<YOUR_MAGIC_CLIENT_ID>"
 
     try {
         val token = Token.decode(didToken)
-        token.validate(clientId)
+        token.validate()
 
         println("Token is valid")
         println("Claim: ${token.claim}")
@@ -102,10 +101,8 @@ fun main() = runBlocking {
             connectTimeoutMillis = 30_000
         }
     }
-
     val magicClient = MagicAdminClient(
         secretKey = "<YOUR_API_SECRET_KEY>",
-        magicClientId = "<YOUR_MAGIC_CLIENT_ID>",
         httpClient = customHttpClient
     )
 

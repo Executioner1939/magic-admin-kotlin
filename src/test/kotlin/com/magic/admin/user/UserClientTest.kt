@@ -1,6 +1,6 @@
 package com.magic.admin.user
 
-import com.skunkworks.magic.api.MagicAdminClient
+import com.skunkworks.magic.client.MagicAdminClient
 import com.skunkworks.magic.errors.MagicAdminException
 import com.skunkworks.magic.model.UserInfo
 import com.skunkworks.magic.model.Wallet

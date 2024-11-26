@@ -3,16 +3,17 @@ package com.skunkworks.magic.token
 import kotlinx.serialization.Serializable
 
 /**
- * Represents a claim within a token which includes various details such as issuance time, expiration time, issuer, and subject.
+ * The `Claim` data class represents the claims component of a token. It holds various fields that
+ * are used for token validation and authorization.
  *
- * @property issuedAt The timestamp when the token was issued.
- * @property expiresAt The timestamp when the token expires.
- * @property issuer The identifier of the entity that issued the token.
- * @property subject The subject identifier that the token pertains to.
- * @property audience The intended audience for the token.
- * @property notBefore The timestamp before which the token is not valid.
- * @property tokenId The unique identifier for the token.
- * @property additional Optional additional information associated with the token.
+ * @property iat Represents the issued-at timestamp of the token.
+ * @property ext Represents the expiration timestamp of the token.
+ * @property iss Represents the issuer of the token.
+ * @property sub Represents the subject of the token.
+ * @property aud Represents the intended audience of the token.
+ * @property nbf Represents the not-before timestamp, indicating when the token becomes valid.
+ * @property tid Represents a unique token identifier.
+ * @property add Represents additional claims, which are optional.
  */
 @Serializable
 data class Claim(
