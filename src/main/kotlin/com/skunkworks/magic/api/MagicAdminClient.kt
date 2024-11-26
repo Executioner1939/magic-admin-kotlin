@@ -13,6 +13,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
 /**
@@ -24,7 +25,6 @@ import kotlinx.serialization.json.Json
  */
 class MagicAdminClient(
     private val secretKey: String,
-    private val magicClientId: String,
     baseUrl: String = "https://api.magic.link",
     httpClient: HttpClient? = null
 ) : AutoCloseable {
@@ -52,6 +52,20 @@ class MagicAdminClient(
     }
 
     private val endpoints = MagicAdminEndpointsImpl(client)
+
+    private val magicClientId: String
+
+    init {
+        // Fetch the client ID when creating the instance
+        magicClientId = runBlocking {
+            fetchClientInfo().clientId ?: throw IllegalStateException("Client ID is missing in the response")
+        }
+    }
+
+    private suspend fun fetchClientInfo(): ClientInfo {
+        return endpoints.getClientInfo().data
+            ?: throw IllegalStateException("Failed to fetch client info from Magic API")
+    }
 
     suspend fun getUserMetadataByToken(
         didToken: String,

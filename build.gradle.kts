@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.skunkworks"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
@@ -40,7 +40,7 @@ publishing {
             from(components["java"])
             groupId = "com.skunkworks.magic"
             artifactId = "magic-admin-kotlin"
-            version = "1.0.0"
+            version = "1.0.1"
         }
     }
     repositories {
