@@ -4,19 +4,16 @@ plugins {
     id("maven-publish")
 }
 
-group = "com.skunkworks"
-version = "1.0.1"
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
     implementation("org.web3j:core:4.12.2")
-    implementation("io.ktor:ktor-client-core:2.3.7")
-    implementation("io.ktor:ktor-client-java:2.3.7")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+    api("io.ktor:ktor-client-core:2.3.7")
+    api("io.ktor:ktor-client-java:2.3.7")
+    api("io.ktor:ktor-client-content-negotiation:2.3.7")
+    api("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.+")
     testImplementation(kotlin("test"))
@@ -40,7 +37,7 @@ publishing {
             from(components["java"])
             groupId = "com.skunkworks"
             artifactId = "magic-admin-kotlin"
-            version = "1.0.1"
+            version = "1.0.2"
         }
     }
     repositories {
