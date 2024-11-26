@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.web3j:core:5.0.0")
+    implementation("org.web3j:core:4.12.2")
     api("io.ktor:ktor-client-core:3.0.1")
     api("io.ktor:ktor-client-java:3.0.1")
     api("io.ktor:ktor-client-content-negotiation:3.0.1")
@@ -37,7 +37,7 @@ publishing {
             from(components["java"])
             groupId = "com.skunkworks"
             artifactId = "magic-admin-kotlin"
-            version = "1.0.2"
+            version = "1.0.3"
         }
     }
     repositories {

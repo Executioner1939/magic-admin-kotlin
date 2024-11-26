@@ -3,8 +3,10 @@ package com.skunkworks.magic.token
 import com.skunkworks.magic.errors.DIDTokenError
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.web3j.crypto.Hash
 import org.web3j.crypto.Keys
 import org.web3j.crypto.Sign
+import org.web3j.protocol.core.Ethereum
 import org.web3j.utils.Numeric
 import java.nio.charset.StandardCharsets
 import java.security.SignatureException
